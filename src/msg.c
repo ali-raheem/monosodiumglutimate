@@ -6,8 +6,8 @@
 #include <sodium.h>
 
 #define VERSION "v0.0.1"
-#define SECRETKEYPATH "singing.prv"
-#define PUBLICKEYPATH "singing.pub"
+#define SIGNSECRETKEYPATH "signing.prv"
+#define SIGNPUBLICKEYPATH "signing.pub"
 
 void usage(char *name){
   puts("MSG - Simple libsodium signing tool");
@@ -29,11 +29,11 @@ int main(int argc, char *argv[]) {
     unsigned char sk[crypto_sign_SECRETKEYBYTES];
     crypto_sign_keypair(pk, sk);
     FILE *fp;
-    fp = fopen(PUBLICKEYPATH, "wb");
+    fp = fopen(SIGNPUBLICKEYPATH, "wb");
     assert(NULL != fp);
     fwrite(pk, 1, crypto_sign_PUBLICKEYBYTES, fp);
     fclose(fp);
-    fp = fopen(SECRETKEYPATH, "wb");
+    fp = fopen(SIGNSECRETKEYPATH, "wb");
     assert(NULL != fp);
     fwrite(sk, 1, crypto_sign_SECRETKEYBYTES, fp);
     fclose(fp);
@@ -43,11 +43,11 @@ int main(int argc, char *argv[]) {
     char pk_hd[crypto_sign_PUBLICKEYBYTES*2+1];
     char sk_hd[crypto_sign_SECRETKEYBYTES*2+1];
     FILE *fp;
-    fp = fopen(SECRETKEYPATH, "rb");
+    fp = fopen(SIGNSECRETKEYPATH, "rb");
     assert(NULL != fp);
     fread(sk, 1, crypto_sign_SECRETKEYBYTES, fp);
     fclose(fp);
-    fp = fopen(PUBLICKEYPATH, "rb");
+    fp = fopen(SIGNPUBLICKEYPATH, "rb");
     assert(NULL != fp);
     fread(pk, 1, crypto_sign_PUBLICKEYBYTES, fp);
     fclose(fp);
@@ -62,7 +62,7 @@ int main(int argc, char *argv[]) {
     char *msg = argv[2];
     size_t msg_len = strlen(msg);
     FILE *fp;
-    fp = fopen(SECRETKEYPATH, "rb");
+    fp = fopen(SIGNSECRETKEYPATH, "rb");
     assert(NULL != fp);
     fread(sk, 1, crypto_sign_SECRETKEYBYTES, fp);
     fclose(fp);
